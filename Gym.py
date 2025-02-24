@@ -55,7 +55,8 @@ class gym():
 
     @classmethod
     def set_directory(cls):
-        
+
+        '''Is used to determine the storage location of the Excel files.'''        
         try:
             cls.directory = os.path.dirname(os.path.abspath(__file__))
             # directory = '..' # navigates to the previous directory
@@ -95,7 +96,9 @@ class gym():
     
     @classmethod
     def wait(cls):
-
+        
+        '''Prevents the loading time from causing an error 
+        when the database is created and loaded for the first time.'''
         try:
             time.sleep(2) 
         except Exception as e:
@@ -154,8 +157,8 @@ class gym():
     
     @classmethod
     def create_set_database(cls):
-        '''Creates a set with all the dates of the database.'''
 
+        '''Creates a set with all the dates of the database.'''
         query_date = 'SELECT Datum FROM Gym_Plan'
         try:
             cls.set_database.clear()
@@ -189,7 +192,6 @@ class gym():
     def fill_database(cls):
 
         '''Inserts data from Excel tables into database.'''
-
         try: 
             for file in cls.fileset:
                 date_part = file.replace('.xlsx', '')
@@ -255,7 +257,6 @@ class gym():
 
         '''Checks the directory for missing Excel files and deletes the corresponding data 
         records from the database to dajust the database to the status of the directory .'''
-        
         print('Checking for outdated data...')
         try:
             for dataset in cls.set_database:
@@ -293,6 +294,7 @@ class gym():
 
     @classmethod
     def data_analyses(cls, filename='Progress.pdf'):
+        
         '''Creates a graph of the progression for each exercise and saves it as a PDF.'''
         try:
             query = 'SELECT Datum, Übung, Gewicht FROM Gym_Plan'
