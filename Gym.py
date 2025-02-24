@@ -78,8 +78,8 @@ class gym():
         '''Manually close the connection to the database.'''
         try:
             if cls.connection is not None:
-                cls.connection.commit() # 'commit' hat in SQL eine besondere 
-                cls.connection.close()  # Bedeutung. Stichwort Roleback!
+                cls.connection.commit() 
+                cls.connection.close()
                 cls.connection = None
                 cls.cursor = None
                 print('Database closed.')     
@@ -101,7 +101,7 @@ class gym():
         
         '''Creates the table of the database'''
         try:
-            if not hasattr(cls, 'connection') or cls.connection is None: # Prüfen! Wurde noch nie ausgelöst...
+            if not hasattr(cls, 'connection') or cls.connection is None:
                 raise ValueError('Connection not established')  
             cls.cursor.execute('''
             CREATE TABLE IF NOT EXISTS Gym_Plan (
@@ -194,7 +194,7 @@ class gym():
                     df = pd.read_excel(file_path)
                     print(f'Inserting {file} into database...')
                     df['Datum'] = df['Datum'].apply(cls.format_date)
-                    for row in df.itertuples(index=False): # index False vs. True
+                    for row in df.itertuples(index=False):
                         try:
                             cls.cursor.execute('''
                             INSERT INTO Gym_Plan (
@@ -260,7 +260,7 @@ class gym():
                         cls.cursor.execute('DELETE FROM Gym_Plan WHERE Datum = ?', (formatted_date,))
                         print(f'Deleted {dataset} from database.')
                     except Exception as e:
-                        print(f'Error while cleaning database: File: {file}, Error: {e}')
+                        print(f'Error while cleaning database: File: {dataset}, Error: {e}')
                 else:
                     continue
             cls.connection.commit()
