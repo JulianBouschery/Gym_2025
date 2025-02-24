@@ -22,6 +22,7 @@ except ImportError as e:
 class gym():
 
     '''Class variables needed for the communication between the methods.'''
+    counter = 0
     directory = None
     connection = None 
     cursor = None
@@ -35,15 +36,21 @@ class gym():
     def install(cls):
 
         '''Automatically installs all necessary modules.'''
-        modules = ['numpy', 'pandas', 'matplotlib']
-        for module in modules:
-            try:
-                importlib.import_module(module) 
-                # print(f'{module} is alredy installed.')
-            except ImportError:
-                print(f'{module} is not installed. Installing...')
-                subprocess.check_call([sys.executable, '-m', 'pip', 'install', module])
-        print('Intallations checked.')
+        try:
+            modules = ['numpy', 'pandas', 'matplotlib', 'seaborn', 'openpyxl']
+            for module in modules:
+                try:
+                    importlib.import_module(module) 
+                except ImportError:
+                    print(f'{module} is not installed. Installing...')
+                    subprocess.check_call([sys.executable, '-m', 'pip', 'install', module])
+            print('Intallations checked.')
+        except Exception as e:
+            cls.counter += 1
+            if cls.counter < 1:
+                cls.install()
+            else: 
+                raise SystemError
 
 
     @classmethod
@@ -51,7 +58,6 @@ class gym():
         
         try:
             cls.directory = os.path.dirname(os.path.abspath(__file__))
-            # print(cls.directory)
             # directory = '..' # navigates to the previous directory
             # directory = '.' # calls the current directory
         except Exception as e:
@@ -289,14 +295,12 @@ class gym():
     def data_analyses(cls, filename='Progress.pdf'):
         '''Creates a graph of the progression for each exercise and saves it as a PDF.'''
         try:
-            # 1. Daten aus Datenbank auslesen. Check.
             query = 'SELECT Datum, Übung, Gewicht FROM Gym_Plan'
             cls.cursor.execute(query)
             data = cls.cursor.fetchall()
             df = pd.DataFrame(data, columns=['Datum', 'Übung', 'Gewicht'])
             df['Datum'] = pd.to_datetime(df['Datum'])
     
-            # Daten vorbereiten
             df.set_index('Datum', inplace=True)
             drop_ex = ['Laufen (Gewicht = km/h, Satz = min)',
                        'Schultern aufgewärmt? (0 = nein / 1 = ja)',
@@ -374,7 +378,6 @@ if __name__ == '__main__':
     #gym.reset_database()
     
     gym.data_analyses()
-
     gym.close_con()
 
 
